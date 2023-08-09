@@ -38,7 +38,7 @@ def gen(text):
     img = cv2.bitwise_and(img, mask)
     blank = np.zeros((mask.shape[0], mask.shape[0] * 10, 3), np.uint8)
     img = np.hstack((blank, img, blank))
-    xs = np.arange(0, size[0] + size[1] * 10, int(size[1] / 20))
+    xs = np.arange(0, size[0] + size[1] * 10, int(size[1] / 10))
 
     def make_frame(x):
         frame = cv2pil(img[:, x:x + img.shape[0] * 10, :])
@@ -47,12 +47,12 @@ def gen(text):
     frames = np.frompyfunc(make_frame, 1, 1)(xs)
     buff = BytesIO()
     frames[0].save(buff, format="GIF", save_all=True, append_images=frames[1:], loop=0)
-    return buff.getvalue()
+    return buff
 
 
 if __name__ == "__main__":
     start = time.perf_counter()
-    data = gen("Hello, world")
+    data = gen("Hello, world").getvalue()
     print(f"{time.perf_counter() - start}s")
     with open("out.gif", "wb") as f:
         f.write(data)
