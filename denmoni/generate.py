@@ -33,7 +33,7 @@ def gen(text):
     xs = np.arange(0, size[0] + size[1] * 10, int(size[1] / 10))
 
     def make_frame(x):
-        frame = cv2pil(img[:, x:x + img.shape[0] * 10, :])
+        frame = cv2pil(img[:, x:x + (img.shape[0] - 20) * 10, :])
         return frame
 
     frames = np.frompyfunc(make_frame, 1, 1)(xs)
