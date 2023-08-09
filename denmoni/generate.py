@@ -6,7 +6,7 @@ from PIL import Image, ImageFont, ImageDraw
 import time
 
 font = ImageFont.truetype(
-    op.join(op.dirname(__file__), "./NotoSerifJP-Regular.otf"), 100
+    op.join(op.dirname(__file__), "./JF-Dot-jiskan24h.ttf"), 100
 )
 
 
@@ -24,20 +24,12 @@ def gen(text):
     size = draw.textbbox((0, 0), text, font=font)[2:]
     img = Image.new("RGB", size, (0, 0, 0))
     draw = ImageDraw.Draw(img)
-    draw.text((0, 0), text, "#fff", font=font)
+    draw.text((0, 0), text, (253, 126, 0), font=font)
     img = pil2cv(img)
-    img = cv2.resize(
-        img, dsize=(int(size[0] / size[1] * 40), 40), interpolation=cv2.INTER_NEAREST
-    )
-    img = cv2.resize(img, dsize=size, interpolation=cv2.INTER_NEAREST)
-    mask = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    _, mask = cv2.threshold(mask, 126, 255, cv2.THRESH_BINARY)
-    mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-    img = np.zeros((mask.shape[0], mask.shape[1], 3), np.uint8)
-    img += np.array([0, 126, 253]).astype(np.uint8)
-    img = cv2.bitwise_and(img, mask)
-    blank = np.zeros((mask.shape[0], mask.shape[0] * 10, 3), np.uint8)
-    img = np.hstack((blank, img, blank))
+    blank_x = np.zeros((img.shape[0], img.shape[0] * 10, 3), np.uint8)
+    img = np.hstack((blank_x, img, blank_x))
+    blank_y = np.zeros((10, img.shape[1], 3), np.uint8)
+    img = np.vstack((blank_y, img, blank_y))
     xs = np.arange(0, size[0] + size[1] * 10, int(size[1] / 10))
 
     def make_frame(x):
